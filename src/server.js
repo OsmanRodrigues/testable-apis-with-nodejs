@@ -1,12 +1,6 @@
-import express from 'express'
-import bodyParser from 'body-parser'
+import app from "./app"
+const port = 8080;
 
-const app = express()
-
-app.use(bodyParser.json())
-
-app.get('/', (req, res) => res.send('hello world!'))
-
-app.listen(8080, () => {
-    console.log('Example app listening on port 8080!')
+app.listen(port, () => {
+    console.log(`app running on port ${port}`)
 })
