@@ -20,6 +20,7 @@
     "@babel/preset-env": "^7.24.4",
     "chai": "^4.4.1",
     "mocha": "^6.2.3",
+    "sinon": "^7.5.0",
     "supertest": "^4.0.2"
   },
   "dependencies": {
