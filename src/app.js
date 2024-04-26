@@ -6,4 +6,10 @@ app.use(bodyParser.json());
 
 app.get('/', (req, res) => res.send('hello world!'));
 
+app.get('/products', (req, res) => res.send([{
+    name: 'Default product',
+    description: 'product description',
+    price: 100
+}]))
+
 export default app
