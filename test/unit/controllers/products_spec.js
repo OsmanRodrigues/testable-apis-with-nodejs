@@ -14,12 +14,12 @@ describe('Controllers: Products', () => {
             const res = {
                 send: sinon.spy()
             };
-            Product.find = sinon.stub;
+            Product.find = sinon.stub();
             Product.find.withArgs({}).resolves(defaultProduct);
             const productsController = new ProductsController(Product);
             
             await productsController.get(req, res);
-            
+
             sinon.assert.calledWith(res.send, defaultProduct);
         });
     });
