@@ -9,7 +9,9 @@
     "start:dev": "babel-node src/server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "test:integration": "NODE_ENV=test mocha --opts test/integration/mocha.opts test/integration/**/*_spec.js",
-    "test:unit": "NODE_ENV=test mocha --opts test/unit/mocha.opts test/unit/**/*_spec.js"
+    "test:unit": "NODE_ENV=test mocha --opts test/unit/mocha.opts test/unit/**/*_spec.js",
+    "db:dev:up": "docker compose --file docker-compose.dev.yml up -d --build",
+    "db:dev:down": "docker compose --file docker-compose.dev.yml down"
   },
   "author": "",
   "license": "ISC",
