@@ -4,8 +4,12 @@ class ProductsController {
     }
     
     async get(req, res) {
-        const products = await this.Product.find({});
-        return res.send(products);
+        try {
+            const products = await this.Product.find({});
+            return res.send(products);
+        } catch (err) {
+            res.status(400).send(err.message);
+        }
     }
  };
 
