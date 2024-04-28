@@ -22,5 +22,21 @@ describe('Controllers: Products', () => {
 
             sinon.assert.calledWith(res.send, defaultProduct);
         });
+        it('should return 400 when an error occurs', async () => { 
+            const req = {};
+            const res = {
+                send: sinon.spy(),
+                status: sinon.stub()
+            }
+
+            res.status.withArgs(400).returns(res);
+            Product.find = sinon.stub();
+            Product.find.withArgs({}).rejects({ message: 'Error' });
+
+            const productsController = new ProductsController(Product);
+            await productsController.get(req, res);
+
+            sinon.assert.calledWith(res.send, 'Error');
+        });
     });
 });
