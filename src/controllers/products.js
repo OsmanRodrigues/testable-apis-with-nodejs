@@ -24,10 +24,14 @@ class ProductsController {
     }
 
     async create(req, res) {
-        const product = new this.Product(req.body);
-        
-        await product.save();
-        res.status(201).send(product);
+        try {
+            const product = new this.Product(req.body);
+
+            await product.save();
+            res.status(201).send(product);
+        } catch (err) {
+            res.status(422).send(err.message);
+        }
     }
  };
 

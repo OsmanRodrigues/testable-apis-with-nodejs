@@ -88,5 +88,27 @@ describe('Controllers: Products', () => {
             await productsController.create(reqWithBody, res);
             sinon.assert.calledWith(res.send);
         });
+        context('when an error occurs', () => {
+            it('should return 422', async () => {
+                const res = {
+                    send: sinon.spy(),
+                    status: sinon.stub()
+                };
+                class fakeProduct {
+                    save() {}
+                }
+
+                res.status.withArgs(422).returns(res);
+                sinon.stub(fakeProduct.prototype, 'save')
+                    .withArgs()
+                    .rejects({ message: 'Error' });
+                
+                const productsController = new ProductsController(fakeProduct);
+
+                await productsController.create(defaultReq, res);
+                sinon.assert.calledWith(res.status, 422);
+            });
+        });
     });
+    
 });
