@@ -24,7 +24,10 @@ class ProductsController {
     }
 
     async create(req, res) {
-        return await Promise.resolve(res.send(req.body));
+        const product = new this.Product(req.body);
+        
+        await product.save();
+        res.status(201).send(product);
     }
  };
 
