@@ -22,6 +22,10 @@ class ProductsController {
             res.status(400).send(err.message);
         }
     }
+
+    async create(req, res) {
+        return await Promise.resolve(res.send(req.body));
+    }
  };
 
 export default ProductsController;
