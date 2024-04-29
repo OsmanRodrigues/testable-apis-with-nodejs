@@ -33,6 +33,23 @@ class ProductsController {
             res.status(422).send(err.message);
         }
     }
+
+    async update(req, res) {
+        const { body, params: { id } } = req;
+        try {
+            const updateRes = await this.Product.updateOne(
+              { _id: id },
+              body
+            );
+            
+            if (updateRes?.ok !== 1 || updateRes?.nModified !== 1)
+                return res.status(304).send({message: 'Product not modified.'});
+              
+            res.status(200).send(body);
+        } catch (err) {
+            res.status(400).send(err.message);
+        }
+    }
  };
 
 export default ProductsController;
