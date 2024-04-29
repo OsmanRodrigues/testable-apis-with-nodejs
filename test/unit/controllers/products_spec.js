@@ -65,4 +65,28 @@ describe('Controllers: Products', () => {
             sinon.assert.calledWith(res.send, defaultProduct);
         });
     });
+    describe('create()', () => {
+        it('should save a new product successfully', async () => {
+            const reqWithBody = Object.assign({}, {
+                body: defaultProduct[0]
+            }, defaultReq);
+            const res = {
+                send: sinon.spy(),
+                status: sinon.stub()
+            };
+            class fakeProduct {
+                save(){}
+            };
+
+            res.status.withArgs(201).returns(res);
+            sinon.stub(fakeProduct.prototype, 'save')
+                .withArgs()
+                .resolves();
+            
+            const productsController = new ProductsController(fakeProduct);
+
+            await productsController.create(reqWithBody, res);
+            sinon.assert.calledWith(res.send);
+        });
+    });
 });
