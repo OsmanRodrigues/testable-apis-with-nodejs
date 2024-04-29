@@ -42,10 +42,12 @@ class ProductsController {
               body
             );
             
-            if (updateRes?.ok !== 1 || updateRes?.nModified !== 1)
-                return res.status(304).send({message: 'Product not modified.'});
-              
-            res.status(200).send(body);
+            if (updateRes?.ok !== 1 || updateRes?.nModified === 0) {
+                res.status(304).send();
+            }
+            else {
+                res.status(200).send(body);
+            }
         } catch (err) {
             res.status(400).send(err.message);
         }

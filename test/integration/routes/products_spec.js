@@ -97,5 +97,21 @@ describe('Routes: Products', () => {
               });
           });
         });
+        context('when try to update a product with same old values', () => {
+          it('should return a status code 304', (done) => {
+            const id = expectedProduct._id;
+            const updatedProduct = {
+              ...expectedProduct,
+            };
+
+            request
+                .put(`/products/${id}`)
+                .send(updatedProduct)
+                .end((err, res) => {
+                    expect(res.statusCode).to.eql(304);
+                    done(err);
+                });
+          });
+        });
     });
 });
