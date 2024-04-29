@@ -76,5 +76,23 @@ describe('Routes: Products', () => {
                     });
             });
         });
+        context('when update a product', () => {
+            it('should return the updated product with status code 200', done => {
+                const id = expectedProduct._id;
+                const updatedProduct = {
+                  ...expectedProduct,
+                  name: 'Updated product',
+                };
+
+                request
+                    .post(`/products/update/${id}`)
+                    .send(updatedProduct)
+                    .end((err, res) => { 
+                        expect(res.statusCode).to.eql(200);
+                        expect(res.body).to.eql(updatedProduct);
+                        done(err);
+                    });
+            });
+        });
     });
 });
