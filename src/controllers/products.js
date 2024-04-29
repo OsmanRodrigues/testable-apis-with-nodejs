@@ -41,7 +41,7 @@ class ProductsController {
               { _id: id },
               body
             );
-            
+
             if (updateRes?.ok !== 1 || updateRes?.nModified === 0) {
                 res.status(304).send();
             }
@@ -49,7 +49,7 @@ class ProductsController {
                 res.status(200).send(body);
             }
         } catch (err) {
-            res.status(400).send(err.message);
+            res.status(422).send(err.message);
         }
     }
  };
