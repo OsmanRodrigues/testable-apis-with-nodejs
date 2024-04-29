@@ -7,6 +7,8 @@ describe('Controllers: Products', () => {
         params: {}
     };
     const defaultProduct = [{
+        __v: 0,
+        _id: '56cb91bdc3464f14678934ca',
         name: 'Default product',
         description: 'product description',
         price: 100
