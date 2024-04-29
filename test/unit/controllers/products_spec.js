@@ -110,5 +110,31 @@ describe('Controllers: Products', () => {
             });
         });
     });
-    
+    describe('update()', () => {
+        it('should update an given product successfully', async () => { 
+            const updatedProduct = {
+                ...defaultProduct[0], 
+                name: 'Updated product',
+            };
+            const reqWithBodyAndParam = Object.assign({},{
+                params: { id: updatedProduct._id },
+                body: updatedProduct
+            });
+            const res = {
+                send: sinon.spy(),
+                status: sinon.stub()
+            }
+            
+            res.status.withArgs(200).returns(res);
+            Product.updateOne = sinon.stub()
+            Product.updateOne
+                .withArgs({ _id: defaultProduct[0]._id }, updatedProduct)
+                .resolves({ok: 1, nModified: 1});
+            
+            const productsController = new ProductsController(Product);
+            await productsController.update(reqWithBodyAndParam, res);
+
+            sinon.assert.calledWith(res.send);
+        });
+    });
 });
