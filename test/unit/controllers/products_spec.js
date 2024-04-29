@@ -3,6 +3,9 @@ import sinon from 'sinon';
 import Product from '../../../src/models/product';
 
 describe('Controllers: Products', () => {
+    const defaultReq = {
+        params: {}
+    };
     const defaultProduct = [{
         name: 'Default product',
         description: 'product description',
@@ -10,7 +13,6 @@ describe('Controllers: Products', () => {
     }]
     describe('get() products', () => {
         it('should return a list of products', async () => {
-            const req = {};
             const res = {
                 send: sinon.spy()
             };
@@ -18,7 +20,7 @@ describe('Controllers: Products', () => {
             Product.find.withArgs({}).resolves(defaultProduct);
             const productsController = new ProductsController(Product);
             
-            await productsController.get(req, res);
+            await productsController.get(defaultReq, res);
 
             sinon.assert.calledWith(res.send, defaultProduct);
         });
@@ -37,6 +39,28 @@ describe('Controllers: Products', () => {
             await productsController.get(req, res);
 
             sinon.assert.calledWith(res.send, 'Error');
+        });
+    });
+    describe('getById()', () => {
+        it('should return one product', async () => {
+            const fakeId = 'a-fake-id';
+            const req = {
+                params: {
+                    id: fakeId
+                }
+            };
+            const res = {
+                send: sinon.spy()
+            };
+            Product.find = sinon.stub();
+            Product.find
+                .withArgs({ _id: fakeId })
+                .resolves(defaultProduct);
+            
+            const productsController = new ProductsController(Product);
+            await productsController.getById(req, res);
+
+            sinon.assert.calledWith(res.send, defaultProduct);
         });
     });
 });
