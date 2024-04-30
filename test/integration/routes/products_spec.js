@@ -114,4 +114,20 @@ describe('Routes: Products', () => {
           });
         });
     });
+
+    describe('DELETE /products/:id', () => {
+        context('when delete a product', () => {
+            it('should return no content and status code 204', (done) => {
+              const id = expectedProduct._id;
+
+                request
+                    .delete(`/products/${id}`)
+                    .end((err, res) => {
+                        expect(res.statusCode).to.eql(204);
+                        expect(res.body).to.eql(undefined);
+                        done(err);
+                    });
+            });
+        });
+    });
 });
