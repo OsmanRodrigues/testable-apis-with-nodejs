@@ -193,5 +193,31 @@ describe('Controllers: Products', () => {
             sinon.assert.calledWithExactly(res.status, 204);
             sinon.assert.calledWithExactly(res.send, undefined);
         });
+        context('when an error occurs', () => {
+            it('should return 400', async () => {
+                const fakeId = 'fakeId';
+                const reqWithParam = {
+                  params: { id: fakeId },
+                };
+                const res = {
+                  send: sinon.spy(),
+                  status: sinon.stub(),
+                };
+                class fakeProduct {
+                  static deleteOne() {}
+                }
+
+                sinon
+                  .stub(fakeProduct, 'deleteOne')
+                  .withArgs({ _id: fakeId })
+                  .rejects({message: 'Error'});
+                res.status.withArgs(400).returns(res);
+
+                const productsController = new ProductsController(fakeProduct);
+                await productsController.delete(reqWithParam, res);
+
+                sinon.assert.calledWithExactly(res.status, 400);
+            });
+        });
     });
 });

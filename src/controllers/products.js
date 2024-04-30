@@ -58,7 +58,7 @@ class ProductsController {
             const deleteRes = await this.Product.deleteOne({ _id: req.params.id });
             res.status(204).send(undefined);
         } catch (err) {
-            res.status(422).send(err.message);
+            res.status(400).send(err.message);
         }
     }
  };
