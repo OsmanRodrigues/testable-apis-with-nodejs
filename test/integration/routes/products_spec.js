@@ -124,7 +124,7 @@ describe('Routes: Products', () => {
                     .delete(`/products/${id}`)
                     .end((err, res) => {
                         expect(res.statusCode).to.eql(204);
-                        expect(res.body).to.eql(undefined);
+                        expect(res.body).to.eql({});
                         done(err);
                     });
             });
