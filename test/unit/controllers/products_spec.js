@@ -189,7 +189,9 @@ describe('Controllers: Products', () => {
             const productsController = new ProductsController(fakeProduct);
             await productsController.delete(reqWithParam, res);
 
-            sinon.assert.calledWith(res.send);
+
+            sinon.assert.calledWithExactly(res.status, 204);
+            sinon.assert.calledWithExactly(res.send, undefined);
         });
     });
 });
