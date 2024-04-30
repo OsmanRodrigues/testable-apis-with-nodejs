@@ -166,4 +166,30 @@ describe('Controllers: Products', () => {
             });
         });
     });
+    describe('delete()', () => {
+        it('should delete an given product successfully', async () => {
+            const id = defaultProduct[0]._id;
+            const reqWithParam = {
+                params: { id }
+            };
+            const res = {
+                send: sinon.spy(),
+                status: sinon.stub()
+            };
+            class fakeProduct {
+                static deleteOne(){}
+            }
+
+            sinon
+                .stub(fakeProduct, 'deleteOne')
+                .withArgs({ _id: id })
+                .resolves();
+            res.status.withArgs(204).returns(res);
+
+            const productsController = new ProductsController(fakeProduct);
+            await productsController.delete(reqWithParam, res);
+
+            sinon.assert.calledWith(res.send);
+        });
+    });
 });
