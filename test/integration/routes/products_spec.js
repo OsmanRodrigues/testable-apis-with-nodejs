@@ -24,11 +24,7 @@ describe('Routes: Products', () => {
         return await product.save();
     });
     afterEach(async () => await Product.deleteMany());
-    before(async () => {
-        app = await setupApp();
-        request = supertest(app);
-    });
-    after(async () => await app.database.connection.close());
+    
     
     describe('GET /products', () => {
         context('when an id is specified', () => {
