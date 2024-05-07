@@ -52,9 +52,9 @@ class UsersController {
         }
     }
 
-    async remove(req, res) {
+    async delete(req, res) {
         try {
-            const deleteRes = await this.User.deleteOne({ _id: req.params.id });
+            const deleteRes = await this.User.remove({ _id: req.params.id });
             res.sendStatus(204);
         } catch (err) {
             res.status(400).send(err.message);
