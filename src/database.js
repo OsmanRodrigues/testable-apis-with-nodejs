@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
+import config from 'config';
 
-const mongodbUrl = process.env.MONGODB_URL || 'mongodb://root:dev@localhost:27017/';
+const mongodbUrl = config.get('database.mongoUrl');
 const connect = () => mongoose.connect(mongodbUrl, {
     useNewUrlParser: true,
     useUnifiedTopology: true
