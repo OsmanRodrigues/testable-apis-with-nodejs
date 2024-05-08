@@ -26,14 +26,17 @@ describe('Controllers: Users', () => {
                 ...userLeftovers,
                 password: bcrypt.hashSync(userLeftovers.password, 10)
             };
+            const token = jwt.sign(userWithEncryptedPwd, config.get('auth.key'), {
+                expiresIn: config.get('auth.tokenExpiresIn')
+            });
             class fakeAuthService {
+                static genToken() {
+                    return token
+                }
                 authenticate() {
                     return Promise.resolve(userWithEncryptedPwd);
                 }
             }
-            const token = jwt.sign(userWithEncryptedPwd, config.get('auth.key'), {
-                expiresIn: config.get('auth.tokenExpiresIn')
-            });
             const req = {
               body: userLeftovers,
             };

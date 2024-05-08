@@ -1,7 +1,3 @@
-import jwt from 'jsonwebtoken';
-import config from 'config';
-import bcrypt from 'bcrypt';
-
 class UsersController {
     constructor(User, AuthService) { 
         this.User = User;
@@ -14,18 +10,12 @@ class UsersController {
 
         if (!user) return res.sendStatus(401);
 
-        const token = jwt.sign(
-            {
-                name: user.name,
-                email: user.email,
-                password: user.password,
-                role: user.role
-            },
-            config.get('auth.key'),
-            {
-                expiresIn: config.get('auth.tokenExpiresIn')
-            }
-        );
+        const token = this.AuthService.genToken({
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role
+        });
 
         return res.send({ token });
     }
