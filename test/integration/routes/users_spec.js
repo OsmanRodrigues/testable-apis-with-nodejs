@@ -23,6 +23,23 @@ describe('Routes: Users', () => {
     });
     afterEach(async () => await User.deleteMany());
     
+    describe('POST /users/authenticate', () => {
+        context('when authenticating an user', () => {
+            it('should generate a valid token', done => {
+                request
+                    .post(`/users/authenticate`)
+                    .send({
+                        email: 'default@mail.com',
+                        password: '123password'
+                    })
+                    .end((err, res) => { 
+                        expect(res.body).to.have.key('token');
+                        expect(res.status).to.eql(200);
+                        done(err);
+                    });
+            });
+        });
+    });
     
     describe('GET /users', () => {
         context('when an id is specified', () => {
