@@ -1,5 +1,9 @@
 {
     "database": {
         "mongoUrl": "mongodb://root:dev@localhost:27017/test"
+    },
+    "auth":{
+        "key": "thisisaverysecurekey",
+        "tokenExpiresIn": "7d"
     }
 }
