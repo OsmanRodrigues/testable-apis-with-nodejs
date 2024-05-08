@@ -3,6 +3,10 @@ class UsersController {
         this.User = User;
     }
     
+    async authenticate(req, res) {
+        return res.send({ token: 'fake-token' });
+    }
+
     async get(req, res) {
         try {
             const users = await this.User.find({});
