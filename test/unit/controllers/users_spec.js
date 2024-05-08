@@ -1,5 +1,8 @@
 import UsersController from '../../../src/controllers/users';
 import sinon from 'sinon';
+import jwt from 'jsonwebtoken';
+import config from 'config';
+import bcrypt from 'bcrypt';
 import User from '../../../src/models/user';
 
 describe('Controllers: Users', () => {
@@ -16,18 +19,39 @@ describe('Controllers: Users', () => {
     }]
 
     describe('authenticate()', () => {
-        it('should authenticate a user', done => {
+        it('should authenticate a user', async () => {
+            const fakeUser = {
+                findOne: sinon.stub()
+            };
+            const { __v, _id, ...userLeftovers } = defaultUser[0];
+            const userWithEncryptedPwd = {
+                ...userLeftovers,
+                password: bcrypt.hashSync(userLeftovers.password, 10)
+            };
+
+            fakeUser.findOne
+                .withArgs({ email: userLeftovers.email })
+                .resolves({
+                    ...userWithEncryptedPwd,
+                    toJson: () => ({
+                        email: userLeftovers.email
+                    })
+                });
+            
+            const token = jwt.sign(userWithEncryptedPwd, config.get('auth.key'), {
+                expiresIn: config.get('auth.tokenExpiresIn')
+            });
             const req = {
-                body: {}
+              body: userLeftovers,
             };
             const res = {
-                send: token => {
-                    expect(token).to.eql({ token: 'fake-token' });
-                    done();
-                }
+              send: sinon.spy(),
             };
-            const usersController = new UsersController({});
-            usersController.authenticate(req, res);
+
+            const usersController = new UsersController(fakeUser);
+            await usersController.authenticate(req, res);
+
+            sinon.assert.calledWith(res.send, { token });
         });
     });
 

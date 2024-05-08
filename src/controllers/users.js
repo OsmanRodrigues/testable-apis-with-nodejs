@@ -1,10 +1,35 @@
+import jwt from 'jsonwebtoken';
+import config from 'config';
+import bcrypt from 'bcrypt';
+
 class UsersController {
     constructor(User) { 
         this.User = User;
     }
     
     async authenticate(req, res) {
-        return res.send({ token: 'fake-token' });
+        const { email, password } = req.body;
+        const user = await this.User.findOne({ email });
+
+        if (!user.password === bcrypt.compareSync(password, user.password)) { 
+            //TODO implements
+            return
+        };
+
+        const token = jwt.sign(
+            {
+                name: user.name,
+                email: user.email,
+                password: user.password,
+                role: user.role
+            },
+            config.get('auth.key'),
+            {
+                expiresIn: config.get('auth.tokenExpiresIn')
+            }
+        );
+
+        res.send({ token });
     }
 
     async get(req, res) {
