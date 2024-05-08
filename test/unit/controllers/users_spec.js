@@ -20,24 +20,17 @@ describe('Controllers: Users', () => {
 
     describe('authenticate()', () => {
         it('should authenticate a user', async () => {
-            const fakeUser = {
-                findOne: sinon.stub()
-            };
+            const fakeUser = {};
             const { __v, _id, ...userLeftovers } = defaultUser[0];
             const userWithEncryptedPwd = {
                 ...userLeftovers,
                 password: bcrypt.hashSync(userLeftovers.password, 10)
             };
-
-            fakeUser.findOne
-                .withArgs({ email: userLeftovers.email })
-                .resolves({
-                    ...userWithEncryptedPwd,
-                    toJson: () => ({
-                        email: userLeftovers.email
-                    })
-                });
-            
+            class fakeAuthService {
+                authenticate() {
+                    return Promise.resolve(userWithEncryptedPwd);
+                }
+            }
             const token = jwt.sign(userWithEncryptedPwd, config.get('auth.key'), {
                 expiresIn: config.get('auth.tokenExpiresIn')
             });
@@ -48,34 +41,26 @@ describe('Controllers: Users', () => {
               send: sinon.spy(),
             };
 
-            const usersController = new UsersController(fakeUser);
+            const usersController = new UsersController(fakeUser, fakeAuthService);
             await usersController.authenticate(req, res);
 
             sinon.assert.calledWith(res.send, { token });
         });
         it('should return 401 when the user can not be found', async () => {
-            const fakeUser = {
-                findOne: sinon.stub()
-            };
+            const fakeUser = {};
+            class fakeAuthService {
+                authenticate() {
+                    return Promise.resolve(false);
+                }
+            }
             const { __v, _id, ...userLeftovers } = defaultUser[0];
-            const userWithDiffPwd = {
-                ...userLeftovers,
-                password: bcrypt.hashSync('another-pwd', 10)
-            };
-
-            fakeUser.findOne
-                .withArgs({ email: userLeftovers.email })
-                .resolves({
-                    ...userWithDiffPwd
-                });
-
             const req = {
                 body: userLeftovers
             };
             const res = {
                 sendStatus: sinon.spy()
             };
-            const usersController = new UsersController(fakeUser);
+            const usersController = new UsersController(fakeUser, fakeAuthService);
 
             await usersController.authenticate(req, res);
 
@@ -246,9 +231,9 @@ describe('Controllers: Users', () => {
                 sendStatus: sinon.spy(),
             };
             class fakeUser {
-                static remove(){}
+                static deleteOne(){}
             }
-            const removeStub = sinon.stub(fakeUser, 'remove');
+            const removeStub = sinon.stub(fakeUser, 'deleteOne');
             removeStub.withArgs({ _id: id }).resolves([1]);
 
             const usersController = new UsersController(fakeUser);
@@ -268,10 +253,10 @@ describe('Controllers: Users', () => {
                   status: sinon.stub(),
                 };
                 class fakeUser {
-                  static remove() {}
+                  static deleteOne() {}
                 }
 
-                const removeStub = sinon.stub(fakeUser, 'remove');
+                const removeStub = sinon.stub(fakeUser, 'deleteOne');
                 removeStub
                     .withArgs({ _id: fakeId })
                     .rejects({message: 'Error'});
