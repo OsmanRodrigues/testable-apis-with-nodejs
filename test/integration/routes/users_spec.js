@@ -1,4 +1,5 @@
 import User from "../../../src/models/user";
+import AuthService from '../../../src/services/auth';
 
 describe('Routes: Users', () => {
     const defaultId = '56cb91bdc3464f14678934ca';
@@ -13,6 +14,7 @@ describe('Routes: Users', () => {
         ...userLeftOvers,
         _id: defaultId,
     };
+    const authToken = AuthService.genToken(expectedUser);
 
     beforeEach(async () => {
         await User.deleteMany();
@@ -56,16 +58,20 @@ describe('Routes: Users', () => {
     describe('GET /users', () => {
         context('when an id is specified', () => {
             it('should return 200 with one user', done => { 
-                request.get(`/users/${defaultId}`).end((err, res) => {
-                  expect(res.statusCode).to.eql(200);
-                  expect(res.body).to.eql([expectedUser]);
-                  done(err);
-                });
+                request
+                    .get(`/users/${defaultId}`)
+                    .set({ 'x-access-token': authToken })
+                    .end((err, res) => {
+                        expect(res.statusCode).to.eql(200);
+                        expect(res.body).to.eql([expectedUser]);
+                        done(err);
+                    });
             });
         });
         it('should return a list of users', done => {
             request
                 .get('/users')
+                .set({'x-access-token': authToken})
                 .end((err, res) => {
                     expect(res.body).to.eql([expectedUser]);
                     done(err);
@@ -90,6 +96,7 @@ describe('Routes: Users', () => {
 
                 request
                     .post('/users')
+                    .set({ 'x-access-token': authToken })
                     .send(newUser)
                     .end((err, res) => {
                         expect(res.statusCode).to.eql(201);
@@ -110,12 +117,13 @@ describe('Routes: Users', () => {
             };
 
             request
-              .put(`/users/${id}`)
-              .send(updatedUser)
-              .end((err, res) => {
-                expect(res.statusCode).to.eql(200);
-                done(err);
-              });
+                .put(`/users/${id}`)
+                .set({ 'x-access-token': authToken })
+                .send(updatedUser)
+                .end((err, res) => {
+                    expect(res.statusCode).to.eql(200);
+                    done(err);
+                });
           });
         });
     });
@@ -127,6 +135,7 @@ describe('Routes: Users', () => {
 
                 request
                     .delete(`/users/${id}`)
+                    .set({'x-access-token': authToken})
                     .end((err, res) => {
                         expect(res.statusCode).to.eql(204);
                         expect(res.body).to.eql({});
