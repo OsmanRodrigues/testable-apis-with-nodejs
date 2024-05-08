@@ -8,28 +8,32 @@ class UsersController {
     }
     
     async authenticate(req, res) {
-        const { email, password } = req.body;
-        const user = await this.User.findOne({ email });
+        try {
+            const { email, password } = req.body;
+            const user = await this.User.findOne({ email });
 
-        if (!user.password === bcrypt.compareSync(password, user.password)) { 
-            //TODO implements
-            return
-        };
+            if (!user.password === bcrypt.compareSync(password, user.password)) {
+                
+                throw new Error('User Unauthorized');
+            };
 
-        const token = jwt.sign(
-            {
-                name: user.name,
-                email: user.email,
-                password: user.password,
-                role: user.role
-            },
-            config.get('auth.key'),
-            {
-                expiresIn: config.get('auth.tokenExpiresIn')
-            }
-        );
+            const token = jwt.sign(
+                {
+                    name: user.name,
+                    email: user.email,
+                    password: user.password,
+                    role: user.role
+                },
+                config.get('auth.key'),
+                {
+                    expiresIn: config.get('auth.tokenExpiresIn')
+                }
+            );
 
-        res.send({ token });
+            res.send({ token });
+        } catch (err) {
+            res.sendStatus(401);
+        }
     }
 
     async get(req, res) {

@@ -53,6 +53,34 @@ describe('Controllers: Users', () => {
 
             sinon.assert.calledWith(res.send, { token });
         });
+        it('should return 401 when the user can not be found', async () => {
+            const fakeUser = {
+                findOne: sinon.stub()
+            };
+            const { __v, _id, ...userLeftovers } = defaultUser[0];
+            const userWithDiffPwd = {
+                ...userLeftovers,
+                password: bcrypt.hashSync('another-pwd', 10)
+            };
+
+            fakeUser.findOne
+                .withArgs({ email: userLeftovers.email })
+                .resolves({
+                    ...userWithDiffPwd
+                });
+
+            const req = {
+                body: userLeftovers
+            };
+            const res = {
+                sendStatus: sinon.spy()
+            };
+            const usersController = new UsersController(fakeUser);
+
+            await usersController.authenticate(req, res);
+
+            sinon.assert.calledWith(res.sendStatus, 401);
+        });
     });
 
     describe('get() users', () => {
