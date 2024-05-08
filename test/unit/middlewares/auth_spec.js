@@ -25,4 +25,11 @@ describe('AuthMiddleware', () => {
             done();
         });
     });
+    it('should call the next middleware if theres no token', done => {
+        const req = {
+            headers: {}
+        };
+        const res = {};
+        authMiddleware(req, res, done);
+    });
 });
