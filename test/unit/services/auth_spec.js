@@ -2,6 +2,8 @@ import AuthService from '../../../src/services/auth';
 import bcrypt from 'bcrypt';
 import Util from 'util';
 import sinon from 'sinon';
+import jwt from 'jsonwebtoken';
+import config from 'config';
 
 const hashAsync = Util.promisify(bcrypt.hash);
 
@@ -46,6 +48,21 @@ describe('Service: Auth', () => {
             const res = await authService.authenticate(user);
 
             expect(res).to.be.false;
+        });
+    });
+    context('genToken', () => {
+        it('should generate a JWT token from a given payload', () => {
+            const payload = {
+                name: 'Jhon',
+                email: 'jhondoe@email.com',
+                password: '12345'
+            };
+            const expectedToken = jwt.sign(payload, config.get('auth.key'), {
+                expiresIn: config.get('auth.tokenExpiresIn')
+            });
+            const generatedToken = AuthService.genToken(payload);
+
+            expect(generatedToken).to.eql(expectedToken);
         });
     });
 });

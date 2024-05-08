@@ -7,6 +7,16 @@ class AuthService {
         this.User = User;
     }
 
+    static genToken(payload) { 
+        return jwt.sign(
+          payload,
+          config.get('auth.key'),
+          {
+            expiresIn: config.get('auth.tokenExpiresIn'),
+          }
+        );
+    }
+
     async authenticate(data) { 
         const { email, password } = data;
         const user = await this.User.findOne({ email });
