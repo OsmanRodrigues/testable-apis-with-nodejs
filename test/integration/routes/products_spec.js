@@ -1,4 +1,5 @@
 import Product from "../../../src/models/product";
+import AuthService from "../../../src/services/auth";
 
 describe('Routes: Products', () => {
     const defaultId = '56cb91bdc3464f14678934ca';
@@ -12,6 +13,13 @@ describe('Routes: Products', () => {
         __v: 0,
         _id: defaultId,
     };
+    const expectedUser = {
+        _id: defaultId,
+        name: 'Default user',
+        email: 'default@mail.com',
+        role: 'admin'
+    };
+    const authToken = AuthService.genToken(expectedUser);
 
     beforeEach(async () => {
         await Product.deleteMany();
@@ -26,16 +34,20 @@ describe('Routes: Products', () => {
     describe('GET /products', () => {
         context('when an id is specified', () => {
             it('should return 200 with one product', done => { 
-                request.get(`/products/${defaultId}`).end((err, res) => {
-                  expect(res.statusCode).to.eql(200);
-                  expect(res.body).to.eql([expectedProduct]);
-                  done(err);
-                });
+                request
+                    .get(`/products/${defaultId}`)
+                    .set({ 'x-access-token': authToken })
+                    .end((err, res) => {
+                        expect(res.statusCode).to.eql(200);
+                        expect(res.body).to.eql([expectedProduct]);
+                        done(err);
+                    });
             });
         });
         it('should return a list of products', done => {
             request
                 .get('/products')
+                .set({ 'x-access-token': authToken })
                 .end((err, res) => {
                     expect(res.body).to.eql([expectedProduct]);
                     done(err);
@@ -61,6 +73,7 @@ describe('Routes: Products', () => {
 
                 request
                     .post('/products')
+                    .set({ 'x-access-token': authToken })
                     .send(newProduct)
                     .end((err, res) => {
                         expect(res.statusCode).to.eql(201);
@@ -81,13 +94,14 @@ describe('Routes: Products', () => {
             };
 
             request
-              .put(`/products/${id}`)
-              .send(updatedProduct)
-              .end((err, res) => {
-                expect(res.statusCode).to.eql(200);
-                expect(res.body).to.eql(updatedProduct);
-                done(err);
-              });
+                .put(`/products/${id}`)
+                .set({ 'x-access-token': authToken })
+                .send(updatedProduct)
+                .end((err, res) => {
+                    expect(res.statusCode).to.eql(200);
+                    expect(res.body).to.eql(updatedProduct);
+                    done(err);
+                });
           });
         });
         context('when try to update a product with same old values', () => {
@@ -99,6 +113,7 @@ describe('Routes: Products', () => {
 
             request
                 .put(`/products/${id}`)
+                .set({ 'x-access-token': authToken })
                 .send(updatedProduct)
                 .end((err, res) => {
                     expect(res.statusCode).to.eql(304);
@@ -115,6 +130,7 @@ describe('Routes: Products', () => {
 
                 request
                     .delete(`/products/${id}`)
+                    .set({ 'x-access-token': authToken })
                     .end((err, res) => {
                         expect(res.statusCode).to.eql(204);
                         expect(res.body).to.eql({});
