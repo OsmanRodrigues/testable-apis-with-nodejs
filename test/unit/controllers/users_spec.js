@@ -14,6 +14,23 @@ describe('Controllers: Users', () => {
         password: 'password',
         role: 'user'
     }]
+
+    describe('authenticate()', () => {
+        it('should authenticate a user', done => {
+            const req = {
+                body: {}
+            };
+            const res = {
+                send: token => {
+                    expect(token).to.eql({ token: 'fake-token' });
+                    done();
+                }
+            };
+            const usersController = new UsersController({});
+            usersController.authenticate(req, res);
+        });
+    });
+
     describe('get() users', () => {
         it('should return a list of users', async () => {
             const res = {
