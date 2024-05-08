@@ -38,6 +38,18 @@ describe('Routes: Users', () => {
                         done(err);
                     });
             });
+            it('should return unauthorized when the password does not match', done => {
+                request
+                    .post(`/users/authenticate`)
+                    .send({
+                        email: 'default@mail.com',
+                        password: 'wrongpassword'
+                    })
+                    .end((err, res) => { 
+                        expect(res.status).to.eql(401);
+                        done(err);
+                    });
+            });
         });
     });
     
