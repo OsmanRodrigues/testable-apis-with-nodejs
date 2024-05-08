@@ -28,5 +28,24 @@ describe('Service: Auth', () => {
 
             expect(res).to.eql(userFromDB);
         });
+        it('should return false when the password does not match', async () => {
+            const user = {
+                email: 'default@mail.com',
+                password: '12345'
+            };
+            const fakeUser = {
+                findOne: sinon.stub()
+            };
+
+            fakeUser.findOne.resolves({
+                email: user.email,
+                password: 'afakehashedpassword'
+            });
+
+            const authService = new AuthService(fakeUser);
+            const res = await authService.authenticate(user);
+
+            expect(res).to.be.false;
+        });
     });
 });
