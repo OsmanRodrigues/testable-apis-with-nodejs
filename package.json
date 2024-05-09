@@ -16,8 +16,7 @@
     "lint:fix": "eslint --fix src/**/*.js test/**/*.js",
     "prettier:list": "prettier --check 'src/**/*.js' 'test/**/*.js'",
     "prettier:fix": "prettier --write 'src/**/*.js' 'test/**/*.js'",
-    "style:fix": "npm run lint:fix & npm run prettier:fix",
-    "init:eslint": "eslint --init"
+    "style:fix": "npm run lint:fix & npm run prettier:fix"
   },
   "author": "",
   "license": "ISC",
