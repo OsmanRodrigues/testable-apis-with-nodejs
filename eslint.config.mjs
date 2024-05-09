@@ -10,7 +10,8 @@ export default [
     {
         ignores: ['node_modules/*', 'dist/*', 'data/*'],
         rules: {
-            
+            "no-undef": "warn",
+            "no-unused-vars": "warn"
         }
     },
 ];

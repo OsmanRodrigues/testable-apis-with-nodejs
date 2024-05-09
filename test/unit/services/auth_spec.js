@@ -25,7 +25,7 @@ describe('Service: Auth', () => {
             fakeUser.findOne
                 .withArgs({ email: user.email })
                 .resolves(userFromDB);
-            
+
             const res = await authService.authenticate(user);
 
             expect(res).to.eql(userFromDB);

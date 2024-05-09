@@ -9,14 +9,16 @@ describe('Controllers: Users', () => {
     const defaultReq = {
         params: {}
     };
-    const defaultUser = [{
-        __v: 0,
-        _id: '56cb91bdc3464f14678934ca',
-        name: 'Default user',
-        email: 'user@mail.com',
-        password: 'password',
-        role: 'user'
-    }]
+    const defaultUser = [
+        {
+            __v: 0,
+            _id: '56cb91bdc3464f14678934ca',
+            name: 'Default user',
+            email: 'user@mail.com',
+            password: 'password',
+            role: 'user'
+        }
+    ];
 
     describe('authenticate()', () => {
         it('should authenticate a user', async () => {
@@ -26,25 +28,32 @@ describe('Controllers: Users', () => {
                 ...userLeftovers,
                 password: bcrypt.hashSync(userLeftovers.password, 10)
             };
-            const token = jwt.sign(userWithEncryptedPwd, config.get('auth.key'), {
-                expiresIn: config.get('auth.tokenExpiresIn')
-            });
+            const token = jwt.sign(
+                userWithEncryptedPwd,
+                config.get('auth.key'),
+                {
+                    expiresIn: config.get('auth.tokenExpiresIn')
+                }
+            );
             class fakeAuthService {
                 static genToken() {
-                    return token
+                    return token;
                 }
                 authenticate() {
                     return Promise.resolve(userWithEncryptedPwd);
                 }
             }
             const req = {
-              body: userLeftovers,
+                body: userLeftovers
             };
             const res = {
-              send: sinon.spy(),
+                send: sinon.spy()
             };
 
-            const usersController = new UsersController(fakeUser, fakeAuthService);
+            const usersController = new UsersController(
+                fakeUser,
+                fakeAuthService
+            );
             await usersController.authenticate(req, res);
 
             sinon.assert.calledWith(res.send, { token });
@@ -63,7 +72,10 @@ describe('Controllers: Users', () => {
             const res = {
                 sendStatus: sinon.spy()
             };
-            const usersController = new UsersController(fakeUser, fakeAuthService);
+            const usersController = new UsersController(
+                fakeUser,
+                fakeAuthService
+            );
 
             await usersController.authenticate(req, res);
 
@@ -79,17 +91,17 @@ describe('Controllers: Users', () => {
             User.find = sinon.stub();
             User.find.withArgs({}).resolves(defaultUser);
             const usersController = new UsersController(User);
-            
+
             await usersController.get(defaultReq, res);
 
             sinon.assert.calledWith(res.send, defaultUser);
         });
-        it('should return 400 when an error occurs', async () => { 
+        it('should return 400 when an error occurs', async () => {
             const req = {};
             const res = {
                 send: sinon.spy(),
                 status: sinon.stub()
-            }
+            };
 
             res.status.withArgs(400).returns(res);
             User.find = sinon.stub();
@@ -113,10 +125,8 @@ describe('Controllers: Users', () => {
                 send: sinon.spy()
             };
             User.find = sinon.stub();
-            User.find
-                .withArgs({ _id: fakeId })
-                .resolves(defaultUser);
-            
+            User.find.withArgs({ _id: fakeId }).resolves(defaultUser);
+
             const usersController = new UsersController(User);
             await usersController.getById(req, res);
 
@@ -125,22 +135,27 @@ describe('Controllers: Users', () => {
     });
     describe('create()', () => {
         it('should call send with a new user', async () => {
-            const reqWithBody = Object.assign({}, {
-                body: defaultUser[0]
-            }, defaultReq);
+            const reqWithBody = Object.assign(
+                {},
+                {
+                    body: defaultUser[0]
+                },
+                defaultReq
+            );
             const res = {
                 send: sinon.spy(),
                 status: sinon.stub()
             };
             class fakeUser {
-                save(){}
-            };
+                save() {}
+            }
 
             res.status.withArgs(201).returns(res);
-            sinon.stub(fakeUser.prototype, 'save')
+            sinon
+                .stub(fakeUser.prototype, 'save')
                 .withArgs()
                 .resolves();
-            
+
             const usersController = new UsersController(fakeUser);
 
             await usersController.create(reqWithBody, res);
@@ -157,10 +172,11 @@ describe('Controllers: Users', () => {
                 }
 
                 res.status.withArgs(422).returns(res);
-                sinon.stub(fakeUser.prototype, 'save')
+                sinon
+                    .stub(fakeUser.prototype, 'save')
                     .withArgs()
                     .rejects({ message: 'Error' });
-                
+
                 const usersController = new UsersController(fakeUser);
 
                 await usersController.create(defaultReq, res);
@@ -169,27 +185,30 @@ describe('Controllers: Users', () => {
         });
     });
     describe('update()', () => {
-        it('should respond with 200 when the user has been updated', async () => { 
+        it('should respond with 200 when the user has been updated', async () => {
             const updatedUser = {
-                ...defaultUser[0], 
-                name: 'Updated user',
+                ...defaultUser[0],
+                name: 'Updated user'
             };
-            const reqWithBodyAndParam = Object.assign({},{
-                params: { id: updatedUser._id },
-                body: updatedUser
-            });
+            const reqWithBodyAndParam = Object.assign(
+                {},
+                {
+                    params: { id: updatedUser._id },
+                    body: updatedUser
+                }
+            );
             const res = {
-                sendStatus: sinon.spy(),
-            }
+                sendStatus: sinon.spy()
+            };
             class fakeUser {
-                static findById() { }
-                save() { }
+                static findById() {}
+                save() {}
             }
             const fakeUserInstance = new fakeUser();
             const saveSpy = sinon.spy(fakeUser.prototype, 'save');
             const findByIdStub = sinon.stub(fakeUser, 'findById');
             findByIdStub.withArgs(updatedUser._id).resolves(fakeUserInstance);
-            
+
             const usersController = new UsersController(fakeUser);
             await usersController.update(reqWithBodyAndParam, res);
 
@@ -208,7 +227,7 @@ describe('Controllers: Users', () => {
                 };
                 const res = {
                     send: sinon.spy(),
-                    status: sinon.stub(),
+                    status: sinon.stub()
                 };
                 class fakeUser {
                     static findById() {}
@@ -231,10 +250,10 @@ describe('Controllers: Users', () => {
                 params: { id }
             };
             const res = {
-                sendStatus: sinon.spy(),
+                sendStatus: sinon.spy()
             };
             class fakeUser {
-                static deleteOne(){}
+                static deleteOne() {}
             }
             const removeStub = sinon.stub(fakeUser, 'deleteOne');
             removeStub.withArgs({ _id: id }).resolves([1]);
@@ -242,28 +261,27 @@ describe('Controllers: Users', () => {
             const usersController = new UsersController(fakeUser);
             await usersController.delete(reqWithParam, res);
 
-
             sinon.assert.calledWithExactly(res.sendStatus, 204);
         });
         context('when an error occurs', () => {
             it('should return 400', async () => {
                 const fakeId = 'fakeId';
                 const reqWithParam = {
-                  params: { id: fakeId },
+                    params: { id: fakeId }
                 };
                 const res = {
-                  send: sinon.spy(),
-                  status: sinon.stub(),
+                    send: sinon.spy(),
+                    status: sinon.stub()
                 };
                 class fakeUser {
-                  static deleteOne() {}
+                    static deleteOne() {}
                 }
 
                 const removeStub = sinon.stub(fakeUser, 'deleteOne');
                 removeStub
                     .withArgs({ _id: fakeId })
-                    .rejects({message: 'Error'});
-                  
+                    .rejects({ message: 'Error' });
+
                 res.status.withArgs(400).returns(res);
 
                 const usersController = new UsersController(fakeUser);

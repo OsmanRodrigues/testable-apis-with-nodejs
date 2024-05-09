@@ -1,9 +1,9 @@
 class UsersController {
-    constructor(User, AuthService) { 
+    constructor(User, AuthService) {
         this.User = User;
         this.AuthService = AuthService;
     }
-    
+
     async authenticate(req, res) {
         const authService = new this.AuthService(this.User);
         const user = await authService.authenticate(req.body);
@@ -30,8 +30,10 @@ class UsersController {
     }
 
     async getById(req, res) {
-        const { params: { id } } = req;
-        
+        const {
+            params: { id }
+        } = req;
+
         try {
             const user = await this.User.find({ _id: id });
             res.send(user);
@@ -52,7 +54,10 @@ class UsersController {
     }
 
     async update(req, res) {
-        const { body, params: { id } } = req;
+        const {
+            body,
+            params: { id }
+        } = req;
         try {
             const user = await this.User.findById(id);
             user.name = body.name;
@@ -71,12 +76,12 @@ class UsersController {
 
     async delete(req, res) {
         try {
-            const deleteRes = await this.User.deleteOne({ _id: req.params.id });
+            await this.User.deleteOne({ _id: req.params.id });
             res.sendStatus(204);
         } catch (err) {
             res.status(400).send(err.message);
         }
     }
- };
+}
 
 export default UsersController;

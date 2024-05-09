@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import config from 'config';
 
-export default (req, res, next) => { 
+export default (req, res, next) => {
     const token = req.headers['x-access-token'];
 
     if (!token) return next();

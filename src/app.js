@@ -20,7 +20,7 @@ const configureExpress = () => {
     app.database = database;
 
     return app;
-}
+};
 
 export default async () => {
     const app = configureExpress();

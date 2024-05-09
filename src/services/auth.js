@@ -7,21 +7,17 @@ class AuthService {
         this.User = User;
     }
 
-    static genToken(payload) { 
-        return jwt.sign(
-          payload,
-          config.get('auth.key'),
-          {
-            expiresIn: config.get('auth.tokenExpiresIn'),
-          }
-        );
+    static genToken(payload) {
+        return jwt.sign(payload, config.get('auth.key'), {
+            expiresIn: config.get('auth.tokenExpiresIn')
+        });
     }
 
-    async authenticate(data) { 
+    async authenticate(data) {
         const { email, password } = data;
         const user = await this.User.findOne({ email });
         const compareResult = await bcrypt.compare(password, user.password);
-        
+
         if (!user || !compareResult) return false;
 
         return user;
