@@ -28,3 +28,20 @@ I suggest you this way of study:
 2. From the chapter "Desenvolvimento guiado por testes", try to implements the code suggested yourself, if you got stuck, follow the commit history of this repo in parallel (from oldest to newest).
 
 Keep in mind that this repo is based in the related book and have some adjusts and updates made. 
+
+## Extra commands
+
+- Use MongoDB with Docker
+  - Up and build container:
+  ```
+  npm run db:dev:up
+  ```
+  - Down container:
+  ```
+  npm run db:dev:down
+  ```
+
+- Use the version 20 of Node.js (with nvm)
+```
+nvm use
+```
