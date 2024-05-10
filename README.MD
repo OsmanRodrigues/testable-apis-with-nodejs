@@ -45,3 +45,13 @@ Keep in mind that this repo is based in the related book and have some adjusts a
 ```
 nvm use
 ```
+
+### Thanks
+
+Many thanks to Waldemar @waldemarnt who gifted the community with this book, which is, in my opinion, one of his greatest collaborations, as it highlights and reinforces, in an accessible way, these important contents of good practices for valuable software development.
+
+### FAQ
+
+If you have any suggestion, comments or questions with this repo or the way it is fed, reach me out in my [linkedin](https://www.linkedin.com/in/osman-rodrigues/) or mail me (osmancesar.mr@gmail).
+
+Feel free to open a pull request with any improvement or ajust. 
